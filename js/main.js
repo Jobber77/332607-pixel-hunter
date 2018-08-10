@@ -70,7 +70,7 @@
     fragment.appendChild(clonnedScreen);
     mainScreen.innerHTML = ``;
     mainScreen.appendChild(fragment);
-  }
+  };
   const nextScreen = () => {
     currentScreenId = currentScreenId < (screens.length - 1) ? ++currentScreenId : 0;
     showScreen(currentScreenId);
