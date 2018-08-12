@@ -1,4 +1,3 @@
-'use strict';
 {
   // #region  variables
   const ScreenOrderById = {
