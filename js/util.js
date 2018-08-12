@@ -1,8 +1,18 @@
+const mainScreen = document.querySelector(`#main`);
+
+const showScreen = (screenToShow) => {
+  const fragment = document.createDocumentFragment();
+  const clonnedScreen = screenToShow.cloneNode(true);
+  fragment.appendChild(clonnedScreen);
+  mainScreen.innerHTML = ``;
+  mainScreen.appendChild(fragment);
+};
+
 const createDOMElement = (type, classes, innerHtml, textContent) => {
   const newElement = document.createElement(type);
   if (Array.isArray(classes)) {
     classes.forEach((element) => newElement.classList.add(element));
-  } else {
+  } else if (classes !== `` && classes !== ` `) {
     newElement.classList.add(classes);
   }
   if (textContent) {
@@ -12,5 +22,5 @@ const createDOMElement = (type, classes, innerHtml, textContent) => {
   return newElement;
 };
 
-export {createDOMElement};
+export {createDOMElement, showScreen};
 

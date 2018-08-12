@@ -46,7 +46,7 @@ gulp.task(`sprite`, () => {
 });
 
 gulp.task(`scripts`, () => {
-  return gulp.src(`js/**/*.js`).
+  return gulp.src(`js/main.js`).
     pipe(plumber()).
     pipe(sourcemaps.init()).
     pipe(rollup({}, `iife`)).
