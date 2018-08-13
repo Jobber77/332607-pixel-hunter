@@ -1,7 +1,8 @@
 import {createDOMElement, showScreen} from './util.js';
-import {game2Page, assignGame2Listeners} from './game-2.js';
+import {screen as game2Screen, assignListeners as assignGame2Listeners} from './game-2.js';
+import {assignBackButtonListener, killBackButtonListener} from './game-navigation';
 
-const GAME1_PAGE_HTML = `<header class="header">
+const GAME1_SCREEN_HTML = `<header class="header">
 <button class="back">
   <span class="visually-hidden">Вернуться к началу</span>
   <svg class="icon" width="45" height="45" viewBox="0 0 45 45" fill="#000000">
@@ -57,20 +58,30 @@ const GAME1_PAGE_HTML = `<header class="header">
   <li class="stats__result stats__result--unknown"></li>
 </ul>
 </section>`;
+let radioButtons;
 
-const assignGame1Listeners = () => {
-  const radioButtons = Array.from(document.querySelectorAll(`input[type=radio]`));
-  const firstOptionRadio = radioButtons.filter((item) => item.name === `question1`);
-  const secondOptionRadio = radioButtons.filter((item) => item.name === `question2`);
-  radioButtons.forEach((item) => item.addEventListener(`click`, () => {
-    if ((firstOptionRadio.some((element) => element.checked === true))
-          && secondOptionRadio.some((element) => element.checked === true)) {
-      showScreen(game2Page);
-      assignGame2Listeners();
-    }
-  }));
+const assignListeners = () => {
+  radioButtons = Array.from(document.querySelectorAll(`input[type=radio]`));
+  radioButtons.forEach((item) => item.addEventListener(`click`, onNextScreenCall));
+  assignBackButtonListener();
 };
 
-const game1Page = createDOMElement(`div`, ``, GAME1_PAGE_HTML);
+const killListeners = () => {
+  radioButtons.forEach((item) => item.removeEventListener(`click`, onNextScreenCall));
+  killBackButtonListener();
+};
 
-export {game1Page, assignGame1Listeners};
+const onNextScreenCall = () => {
+  const firstOptionRadio = radioButtons.filter((item) => item.name === `question1`);
+  const secondOptionRadio = radioButtons.filter((item) => item.name === `question2`);
+  if ((firstOptionRadio.some((element) => element.checked === true))
+        && secondOptionRadio.some((element) => element.checked === true)) {
+    killListeners();
+    showScreen(game2Screen);
+    assignGame2Listeners();
+  }
+};
+
+const screen = createDOMElement(`div`, ``, GAME1_SCREEN_HTML);
+
+export {screen, assignListeners};

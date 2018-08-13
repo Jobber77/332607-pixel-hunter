@@ -1,6 +1,7 @@
 import {createDOMElement} from './util';
+import {assignBackButtonListener} from './game-navigation';
 
-const STATS_PAGE_HTML = `<header class="header">
+const STATS_SCREEN_HTML = `<header class="header">
 <button class="back">
   <span class="visually-hidden">Вернуться к началу</span>
   <svg class="icon" width="45" height="45" viewBox="0 0 45 45" fill="#000000">
@@ -112,4 +113,10 @@ const STATS_PAGE_HTML = `<header class="header">
 </table>
 </section>`;
 
-export const statsPage = createDOMElement(`div`, ``, STATS_PAGE_HTML);
+const assignListeners = () => {
+  assignBackButtonListener(true);
+};
+
+const screen = createDOMElement(`div`, ``, STATS_SCREEN_HTML);
+
+export {assignListeners, screen};

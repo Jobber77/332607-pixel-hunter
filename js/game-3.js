@@ -1,6 +1,8 @@
-import {createDOMElement} from './util';
+import {createDOMElement, showScreen} from './util.js';
+import {screen as statsScreen, assignListeners as assignStatsListeners} from './stats.js';
+import {assignBackButtonListener, killBackButtonListener} from './game-navigation';
 
-const GAME3_PAGE_HTML = `<header class="header">
+const GAME3_SCREEN_HTML = `<header class="header">
 <button class="back">
   <span class="visually-hidden">Вернуться к началу</span>
   <svg class="icon" width="45" height="45" viewBox="0 0 45 45" fill="#000000">
@@ -43,5 +45,25 @@ const GAME3_PAGE_HTML = `<header class="header">
   <li class="stats__result stats__result--unknown"></li>
 </ul>
 </section>`;
+let nextScreenButtons;
 
-export const game3Page = createDOMElement(`div`, ``, GAME3_PAGE_HTML);
+const assignListeners = () => {
+  nextScreenButtons = document.querySelectorAll(`.game__option`);
+  Array.from(nextScreenButtons).forEach((item) => item.addEventListener(`click`, onNextScreenCall));
+  assignBackButtonListener();
+};
+
+const killListeners = () => {
+  nextScreenButtons.forEach((item) => item.removeEventListener(`click`, onNextScreenCall));
+  killBackButtonListener();
+};
+
+const onNextScreenCall = () => {
+  killListeners();
+  showScreen(statsScreen);
+  assignStatsListeners();
+};
+
+const screen = createDOMElement(`div`, ``, GAME3_SCREEN_HTML);
+
+export {assignListeners, screen};

@@ -1,7 +1,8 @@
 import {createDOMElement, showScreen} from './util.js';
-import {game1Page, assignGame1Listeners} from './game-1.js';
+import {screen as game1Screen, assignListeners as assignGame1Listeners} from './game-1.js';
+import {assignBackButtonListener, killBackButtonListener} from './game-navigation.js';
 
-const RULES_PAGE_HTML = `<header class="header">
+const RULES_SCREEN_HTML = `<header class="header">
 <button class="back">
   <span class="visually-hidden">Вернуться к началу</span>
   <svg class="icon" width="45" height="45" viewBox="0 0 45 45" fill="#000000">
@@ -28,20 +29,33 @@ const RULES_PAGE_HTML = `<header class="header">
   <button class="rules__button  continue" type="submit" disabled>Go!</button>
 </form>
 </section>`;
+let nextScreenButton;
+let rulesInput;
 
-const assignRulesListeners = () => {
-  const nextScreenButton = document.querySelector(`.rules__button`);
-  const rulesInput = document.querySelector(`.rules__input`);
-  rulesInput.addEventListener(`input`, (evt) => {
-    const enable = evt.target.value.length > 0;
-    nextScreenButton.disabled = !enable;
-  });
-  nextScreenButton.addEventListener(`click`, () => {
-    showScreen(game1Page);
-    assignGame1Listeners();
-  });
+const assignListeners = () => {
+  nextScreenButton = document.querySelector(`.rules__button`);
+  rulesInput = document.querySelector(`.rules__input`);
+  rulesInput.addEventListener(`input`, onRulesInputClick);
+  nextScreenButton.addEventListener(`click`, onNextScreenCall);
+  assignBackButtonListener();
 };
 
-const rulesPage = createDOMElement(`div`, ``, RULES_PAGE_HTML)
+const killListeners = () => {
+  nextScreenButton.removeEventListener(`click`, onNextScreenCall);
+  killBackButtonListener();
+};
 
-export {rulesPage, assignRulesListeners};
+const onRulesInputClick = (evt) => {
+  const enable = evt.target.value.length > 0;
+  nextScreenButton.disabled = !enable;
+};
+
+const onNextScreenCall = () => {
+  killListeners();
+  showScreen(game1Screen);
+  assignGame1Listeners();
+};
+
+const screen = createDOMElement(`div`, ``, RULES_SCREEN_HTML);
+
+export {screen, assignListeners};

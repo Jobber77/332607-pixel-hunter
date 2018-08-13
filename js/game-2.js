@@ -1,7 +1,8 @@
 import {createDOMElement, showScreen} from './util.js';
-import {game3Page} from './game-3';
+import {screen as game3Screen, assignListeners as assignGame3Listeners} from './game-3';
+import {assignBackButtonListener, killBackButtonListener} from './game-navigation';
 
-const GAME2_PAGE_HTML = `<header class="header">
+const GAME2_SCREEN_HTML = `<header class="header">
 <button class="back">
   <span class="visually-hidden">Вернуться к началу</span>
   <svg class="icon" width="45" height="45" viewBox="0 0 45 45" fill="#000000">
@@ -46,15 +47,25 @@ const GAME2_PAGE_HTML = `<header class="header">
   <li class="stats__result stats__result--unknown"></li>
 </ul>
 </section>`;
+let nextScreenButtons;
 
-const assignGame2Listeners = () => {
-  const nextScreenButton = document.querySelector(`.rules__button`);
-  nextScreenButton.addEventListener(`click`, () => {
-    showScreen(game3Page);
-    // assignGame3Listeners();
-  });
+const assignListeners = () => {
+  nextScreenButtons = Array.from(document.querySelectorAll(`.game__answer`));
+  nextScreenButtons.forEach((item) => item.addEventListener(`click`, onNextScreenCall));
+  assignBackButtonListener();
 };
 
-const game2Page = createDOMElement(`div`, ``, GAME2_PAGE_HTML);
+const killListeners = () => {
+  nextScreenButtons.forEach((item) => item.removeEventListener(`click`, onNextScreenCall));
+  killBackButtonListener();
+};
 
-export {assignGame2Listeners, game2Page};
+const onNextScreenCall = () => {
+  killListeners();
+  showScreen(game3Screen);
+  assignGame3Listeners();
+};
+
+const screen = createDOMElement(`div`, ``, GAME2_SCREEN_HTML);
+
+export {assignListeners, screen};
