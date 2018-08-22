@@ -1,6 +1,7 @@
 const SLOW_TIMELIMIT = 20;
 const FAST_TIMELIMIT = 10;
 const MAX_ATTEMPTS = 3;
+const MIN_ATTEMPTS = 0;
 
 const calculateGameScore = (answersArray, unusedAttempts) => {
   if (!Array.isArray(answersArray) || typeof unusedAttempts !== `number`) {
@@ -29,4 +30,22 @@ const calculateGameScore = (answersArray, unusedAttempts) => {
   return score;
 };
 
-export {calculateGameScore};
+const updateAttempts = (answer, currentAttempts) => {
+  if (typeof answer.isSuccess !== `boolean` || typeof answer.timeSpent !== `number` || typeof currentAttempts !== `number`) {
+    throw new Error(`Incorrect arguments type`);
+  }
+  const tempAnswer = Object.assign({}, answer);
+  let tempCurrentAttempts = currentAttempts;
+
+  if (tempCurrentAttempts < MIN_ATTEMPTS) {
+    throw new Error(`Incorrect arguments values`);
+  }
+
+  if (!tempAnswer.isSuccess) {
+    tempCurrentAttempts--;
+  }
+  return tempCurrentAttempts;
+
+};
+
+export {calculateGameScore, updateAttempts};
