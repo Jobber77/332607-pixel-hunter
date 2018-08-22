@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import {calculateGameScore, updateAttempts} from '../game-statistics';
+import {calculateGameScore, updateAttempts, startTimer} from '../game-statistics';
 
 const defaultAnswers = [{isSuccess: true, timeSpent: 15},
   {isSuccess: true, timeSpent: 15},
@@ -12,8 +12,23 @@ const defaultAnswers = [{isSuccess: true, timeSpent: 15},
   {isSuccess: true, timeSpent: 15},
   {isSuccess: true, timeSpent: 15}];
 const MAX_TIME_FOR_ANSWER = 30;
+const TIME_IS_UP_SOON_SECONDS = 5;
 
-describe(`update Attempts tests`, () => {
+describe(`startTimer tests`, () => {
+  it(`throw if incorrect arguments type passed`, () => {
+    assert.throw(() => startTimer({}), `time parameter should be a number`);
+    assert.throw(() => startTimer(`asd`), `time parameter should be a number`);
+  });
+  it(`throw if incorrect arguments values passed`, () => {
+    assert.throw(() => startTimer(-1, `time parameter has incorrect value`));
+    assert.throw(() => startTimer(TIME_IS_UP_SOON_SECONDS - 1, `time parameter has incorrect value`));
+  });
+  it(`calls callback on timer end`, () => {
+    //  как это протестировать?
+  });
+});
+
+describe(`updateAttempts tests`, () => {
   it(`throw if incorrect arguments types passed`, () => {
     assert.throw(() => updateAttempts({}), `Incorrect arguments type`);
     assert.throw(() => updateAttempts({isSuccess: true, timeSpent: `a`}), `Incorrect arguments type`);
@@ -36,7 +51,7 @@ describe(`update Attempts tests`, () => {
   });
 });
 
-describe(`stats calculation tests`, () => {
+describe(`calculateGameScore tests`, () => {
   it(`throw if incorrect arguments types passed`, () => {
     assert.throw(() => calculateGameScore(``, 1234), `Incorrect arguments types`);
     assert.throw(() => calculateGameScore([], {}), `Incorrect arguments types`);
