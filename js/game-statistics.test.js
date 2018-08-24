@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import {calculateGameScore, updateAttempts, startTimer} from './game-statistics';
+import {calculateGameScore, updateAttempts, Timer} from './game-statistics';
 
 const defaultAnswers = [{isSuccess: true, timeSpent: 15},
   {isSuccess: true, timeSpent: 15},
@@ -12,19 +12,20 @@ const defaultAnswers = [{isSuccess: true, timeSpent: 15},
   {isSuccess: true, timeSpent: 15},
   {isSuccess: true, timeSpent: 15}];
 const MAX_TIME_FOR_ANSWER = 30;
-const TIME_IS_UP_SOON_SECONDS = 5;
 
 describe(`startTimer tests`, () => {
   it(`throw if incorrect arguments type passed`, () => {
-    assert.throw(() => startTimer({}), `time parameter should be a number`);
-    assert.throw(() => startTimer(`asd`), `time parameter should be a number`);
+    assert.throw(() => new Timer({}), `time parameter should be a number`);
+    assert.throw(() => new Timer(`asd`), `time parameter should be a number`);
   });
   it(`throw if incorrect arguments values passed`, () => {
-    assert.throw(() => startTimer(-1, `time parameter has incorrect value`));
-    assert.throw(() => startTimer(TIME_IS_UP_SOON_SECONDS - 1, `time parameter has incorrect value`));
+    assert.throw(() => new Timer(-1), `time parameter has incorrect value`);
   });
-  it(`calls callback on timer end`, () => {
-    //  как это протестировать?
+  it(`constructed object return "Time is up" and "Time is up soon" on "tick" function call`, () => {
+    let obj = new Timer(6);
+    assert.deepEqual(obj.tick(), {currentTime: 5, message: `Time is up soon`});
+    obj = new Timer(1);
+    assert.deepEqual(obj.tick(), {currentTime: 0, message: `Time is up`});
   });
 });
 

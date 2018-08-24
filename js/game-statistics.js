@@ -49,24 +49,25 @@ const updateAttempts = (answer, currentAttempts) => {
 
 };
 
-const startTimer = (maxTimeInSeconds, timeIsUpSoon, timeIsUp) => {
+function Timer(maxTimeInSeconds) {
   if (typeof maxTimeInSeconds !== `number`) {
     throw new Error(`time parameter should be a number`);
   }
-  if (maxTimeInSeconds < TIME_IS_UP_SOON_SECONDS || maxTimeInSeconds < 0) {
+  if (maxTimeInSeconds < 0) {
     throw new Error(`time parameter has incorrect value`);
   }
-  let timeLeft = maxTimeInSeconds;
-  const timer = setInterval(() => {
-    timeLeft--;
-    if (timeLeft === TIME_IS_UP_SOON_SECONDS) {
-      timeIsUpSoon();
+  let currentTime = maxTimeInSeconds;
+  let message = ``;
+  this.tick = () => {
+    currentTime--;
+    if (currentTime === TIME_IS_UP_SOON_SECONDS) {
+      message = `Time is up soon`;
     }
-    if (timeLeft === 0) {
-      clearInterval(timer);
-      timeIsUp();
+    if (currentTime <= 0) {
+      message = `Time is up`;
     }
-  }, 1000);
-};
+    return {currentTime, message};
+  };
+}
 
-export {calculateGameScore, updateAttempts, startTimer};
+export {calculateGameScore, updateAttempts, Timer};
