@@ -1,15 +1,15 @@
-import {createDOMElement, showScreen} from './util.js';
-import {screen as greetingScreen, assignListeners as assignGreetingListeners} from './greeting.js';
+import {createDOMElement, showScreen, converClassListToString} from './util.js';
+import buildnextScreen from './greeting.js';
 
-const INTRO_SCREEN_HTML = `<button class="intro__asterisk asterisk" type="button"><span class="visually-hidden">Продолжить</span>*</button>
+const SCREEN_HTML = `<button class="intro__asterisk asterisk" type="button"><span class="visually-hidden">Продолжить</span>*</button>
   <p class="intro__motto"><sup>*</sup> Это не фото. Это рисунок маслом нидерландского художника-фотореалиста Tjalf Sparnaay.</p>`;
+const WRAPPER_CLASSLIST = [`intro`];
+
 let nextScreenButton;
-const screen = createDOMElement(`section`, `intro`, INTRO_SCREEN_HTML);
 
 const onNextScreenCall = () => {
   killListeners();
-  showScreen(greetingScreen);
-  assignGreetingListeners();
+  buildnextScreen();
 };
 
 const assignListeners = () => {
@@ -21,4 +21,10 @@ const killListeners = () => {
   nextScreenButton.removeEventListener(`click`, onNextScreenCall);
 };
 
-export {screen, assignListeners};
+export default () => {
+  const element = createDOMElement(`section`, WRAPPER_CLASSLIST, SCREEN_HTML);
+  showScreen(element);
+  assignListeners();
+  return document.querySelector(converClassListToString(WRAPPER_CLASSLIST));
+};
+

@@ -1,5 +1,5 @@
-const SLOW_TIMELIMIT = 20;
-const FAST_TIMELIMIT = 10;
+const SLOW_TIMELIMIT = 10;
+const FAST_TIMELIMIT = 20;
 const MAX_ATTEMPTS = 3;
 const MIN_ATTEMPTS = 0;
 const TIME_IS_UP_SOON_SECONDS = 5;
@@ -22,8 +22,8 @@ const calculateGameScore = (answersArray, unusedAttempts) => {
 
   clonnedArray.forEach((answer) => {
     score += answer.isSuccess ? 100 : 0;
-    score += answer.timeSpent <= FAST_TIMELIMIT ? 50 : 0;
-    score += answer.timeSpent >= SLOW_TIMELIMIT ? -50 : 0;
+    score += answer.timeLeft >= FAST_TIMELIMIT ? 50 : 0;
+    score += answer.timeLeft <= SLOW_TIMELIMIT ? -50 : 0;
   });
 
   score += unusedAttempts * 50;
@@ -70,4 +70,12 @@ function Timer(maxTimeInSeconds) {
   };
 }
 
-export {calculateGameScore, updateAttempts, Timer};
+const updateGameData = (answer, gameObject) => {
+  return Object.assign({}, gameObject);
+};
+
+const saveGameData = () => {
+  return `awsome server post method`;
+};
+
+export {calculateGameScore, updateAttempts, Timer, updateGameData, saveGameData};

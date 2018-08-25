@@ -22,5 +22,9 @@ const createDOMElement = (type, classes, innerHtml, textContent) => {
   return newElement;
 };
 
-export {createDOMElement, showScreen};
+const converClassListToString = (classArray) => {
+  return classArray.map((item) => `.${item}`).join(` `);
+};
+
+export {createDOMElement, showScreen, converClassListToString};
 

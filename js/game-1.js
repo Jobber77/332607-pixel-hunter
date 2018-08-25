@@ -1,14 +1,16 @@
 import {createDOMElement, showScreen} from './util.js';
-import {screen as game2Screen, assignListeners as assignGame2Listeners} from './game-2.js';
 import {assignBackButtonListener, killBackButtonListener} from './game-navigation';
+import {updateGameData} from './game-statistics-service';
+import {generateHeaderStatsHtml, generateFooterStatsHtml} from './game-common-elements';
+import buildNextScreen from './game-2.js';
 
-
-const GAME1_SCREEN_HTML = `
+const generateHtml = (currentGame) => `
 <section class="game">
-<p class="game__task">Угадайте для каждого изображения фото или рисунок?</p>
+${generateHeaderStatsHtml(currentGame.currentStats)}
+<p class="game__task">${currentGame.questions[currentGame.currentQuestion].text}</p>
 <form class="game__content">
   <div class="game__option">
-    <img src="http://placehold.it/468x458" alt="Option 1" width="468" height="458">
+    <img src="${currentGame.questions[currentGame.currentQuestion].answers[0].imgLink}" width="468" height="458">
     <label class="game__answer game__answer--photo">
       <input class="visually-hidden" name="question1" type="radio" value="photo">
       <span>Фото</span>
@@ -19,7 +21,7 @@ const GAME1_SCREEN_HTML = `
     </label>
   </div>
   <div class="game__option">
-    <img src="http://placehold.it/468x458" alt="Option 2" width="468" height="458">
+    <img src="${currentGame.questions[currentGame.currentQuestion].answers[1].imgLink}" alt="Option 2" width="468" height="458">
     <label class="game__answer  game__answer--photo">
       <input class="visually-hidden" name="question2" type="radio" value="photo">
       <span>Фото</span>
@@ -30,8 +32,11 @@ const GAME1_SCREEN_HTML = `
     </label>
   </div>
 </form>
+${generateFooterStatsHtml(currentGame.answersHistory)}
 </section>`;
 let radioButtons;
+let currentGame;
+let answer = {isCorrect: false, timeLeft: 15};
 
 const assignListeners = () => {
   radioButtons = Array.from(document.querySelectorAll(`input[type=radio]`));
@@ -50,11 +55,14 @@ const onNextScreenCall = () => {
   if ((firstOptionRadio.some((element) => element.checked === true))
         && secondOptionRadio.some((element) => element.checked === true)) {
     killListeners();
-    showScreen(game2Screen);
-    assignGame2Listeners();
+    buildNextScreen(updateGameData(answer, currentGame));
   }
 };
 
-const screen = createDOMElement(`div`, ``, GAME1_SCREEN_HTML);
-
-export {screen, assignListeners};
+export default (gameObject) => {
+  currentGame = Object.assign({}, gameObject);
+  const element = createDOMElement(`div`, ``, generateHtml(currentGame));
+  showScreen(element);
+  assignListeners();
+  return document.querySelector(`#main > div`);
+};

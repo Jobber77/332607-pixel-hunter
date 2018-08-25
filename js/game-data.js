@@ -1,19 +1,28 @@
-export const gameMainObject = {
-  currentQuestion: 1,
+const initialGameObject = {
+  playerName: ``,
+  currentQuestion: 0,
   questions: [
     {
       type: ``,
       text: ``,
       answers: [
         {
-          imgLink: ``,
+          imgLink: `http://placehold.it/468x458`,
           isPicture: false
+        },
+        {
+          imgLink: `http://placehold.it/468x458`,
+          isPicture: true
+        },
+        {
+          imgLink: `http://placehold.it/468x458`,
+          isPicture: true
         }]
     }
   ],
   currentStats: {
     hp: 3,
-    timeLeft: 30
+    timeLeft: 15
   },
   answersHistory: [
     {
@@ -22,9 +31,14 @@ export const gameMainObject = {
     }
   ],
   gameScreensRenderers: {
-    onePicture: (data) => `awsome screen 1`,
-    twoPictures: (data) => `awsome screen 2`,
-    threePictures: (data) => `awsome screen 3`,
+    onePicture: () => `awsome screen 1`,
+    twoPictures: () => `awsome screen 2`,
+    threePictures: () => `awsome screen 3`,
   }
 };
 
+const generateNewGameObject = (playerName) => {
+  return Object.assign({}, initialGameObject, {playerName});
+};
+
+export {generateNewGameObject};
