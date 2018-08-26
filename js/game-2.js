@@ -1,12 +1,10 @@
 import {createDOMElement, showScreen} from './util.js';
-import {assignBackButtonListener, killBackButtonListener} from './game-navigation';
-import {updateGameData} from './game-statistics-service';
+import {assignBackButtonListener, killBackButtonListener, nextScreenCallHandler} from './game-navigation';
 import {generateHeaderStatsHtml, generateFooterStatsHtml} from './game-common-elements';
-import buildNextScreen from './game-3.js';
 
 const generateHtml = (currentGame) => `
-<section class="game">
 ${generateHeaderStatsHtml(currentGame.currentStats)}
+<section class="game">
 <p class="game__task">${currentGame.questions[currentGame.currentQuestion].text}</p>
 <form class="game__content  game__content--wide">
   <div class="game__option">
@@ -21,14 +19,14 @@ ${generateHeaderStatsHtml(currentGame.currentStats)}
     </label>
   </div>
 </form>
-${generateFooterStatsHtml(currentGame.answersHistory)}
+${generateFooterStatsHtml(currentGame.levelResultHistory)}
 </section>`;
 let currentGame = {};
 let nextScreenButtons;
-let answer = {isCorrect: false, timeLeft: 15};
+let levelResult = {isCorrect: false, timeLeft: 15};
 
 const assignListeners = () => {
-  nextScreenButtons = Array.from(document.querySelectorAll(`.game__answer`));
+  nextScreenButtons = Array.from(document.querySelectorAll(`input[type=radio]`));
   nextScreenButtons.forEach((item) => item.addEventListener(`click`, onNextScreenCall));
   assignBackButtonListener();
 };
@@ -39,14 +37,22 @@ const killListeners = () => {
 };
 
 const onNextScreenCall = () => {
-  killListeners();
-  buildNextScreen(updateGameData(answer, currentGame));
+  nextScreenCallHandler(currentGame, levelResult, validateAnswer, killListeners);
 };
 
-export default (gameObject) => {
+const validateAnswer = (answers, result) => {
+  const chosenAnswer1 = nextScreenButtons.filter((item) => item.checked === true)[0];
+  const correctAnswer1 = answers[0].isPainting ? `paint` : `photo`;
+  const validationResult = chosenAnswer1.value === correctAnswer1;
+  return Object.assign({}, result, {isCorrect: validationResult});
+};
+
+const renderScreen = (gameObject) => {
   currentGame = Object.assign({}, gameObject);
   const element = createDOMElement(`div`, ``, generateHtml(currentGame));
   showScreen(element);
   assignListeners();
   return document.querySelector(`#main > div`);
 };
+
+export default renderScreen;

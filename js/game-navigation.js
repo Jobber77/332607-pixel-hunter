@@ -1,4 +1,5 @@
 import buildIntroScreen from './intro.js';
+import {updateGameHistory, updateAttempts, getNextScreen} from './game-statistics-service';
 
 let backButton = document.querySelector(`.back`);
 
@@ -27,4 +28,21 @@ const killBackButtonListener = () => {
   backButton.removeEventListener(`click`, onBackButtonClick);
 };
 
-export {assignBackButtonListener, killBackButtonListener, BACK_BUTTON_HTML as backButtonHtml};
+const nextScreenCallHandler = (currentGame, levelResult, validateAnswerFunc, killListenersFunc) => {
+  levelResult = validateAnswerFunc(currentGame.questions[currentGame.currentQuestion].answers, levelResult);
+  currentGame.currentStats.hp = updateAttempts(levelResult, currentGame.currentStats.hp);
+  currentGame = updateGameHistory(levelResult, currentGame);
+  killListenersFunc();
+  if (currentGame.currentStats.hp <= -1) {
+    currentGame.gameScreensRenderers[`result`](currentGame);
+  } else {
+    currentGame.currentQuestion = getNextScreen(currentGame.questions[currentGame.currentQuestion], currentGame.questions);
+    if (currentGame.currentQuestion === -1) {
+      currentGame.gameScreensRenderers[`result`](currentGame);
+    } else {
+      currentGame.gameScreensRenderers[currentGame.questions[currentGame.currentQuestion].type](currentGame);
+    }
+  }
+};
+
+export {assignBackButtonListener, killBackButtonListener, BACK_BUTTON_HTML as backButtonHtml, nextScreenCallHandler};

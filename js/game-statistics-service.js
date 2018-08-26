@@ -4,20 +4,21 @@ const MAX_ATTEMPTS = 3;
 const MIN_ATTEMPTS = 0;
 const TIME_IS_UP_SOON_SECONDS = 5;
 
-const calculateGameScore = (answersArray, unusedAttempts) => {
+const calculateTotalGameScore = (answersArray, unusedAttempts) => {
   if (!Array.isArray(answersArray) || typeof unusedAttempts !== `number`) {
     throw new Error(`Incorrect arguments types`);
   }
+  const attempts = unusedAttempts;
   const clonnedArray = answersArray.map((item) => Object.assign({}, item));
-  if (clonnedArray.length > 10 || unusedAttempts < 0 || unusedAttempts > 3) {
+  if (clonnedArray.length > 10 || attempts < -1 || attempts > 3) {
     throw new Error(`Incorrect arguments values`);
   }
-  if (clonnedArray.filter((item) => item.isSuccess === false).length !== (MAX_ATTEMPTS - unusedAttempts)) {
+  if (clonnedArray.filter((item) => item.isCorrect === false).length !== (MAX_ATTEMPTS - attempts)) {
     throw new Error(`Inconsistent arguments`);
   }
   let score = 0;
   if (clonnedArray.length < 10) {
-    return -1;
+    return 0;
   }
 
   clonnedArray.forEach((answer) => {
@@ -31,8 +32,21 @@ const calculateGameScore = (answersArray, unusedAttempts) => {
   return score;
 };
 
+const calculateDetailedStats = (game) => {
+  const correctAnswers = game.levelResultHistory.length - (3 - game.currentStats.hp);
+  const speedAnswers = game.levelResultHistory.filter((item) => item.timeLeft >= 20).length;
+  const slowAnswers = game.levelResultHistory.filter((item) => item.timeLeft <= 10).length;
+  const hp = game.currentStats.hp;
+  return {
+    correctAnswers,
+    speedAnswers,
+    slowAnswers,
+    hp
+  };
+};
+
 const updateAttempts = (answer, currentAttempts) => {
-  if (typeof answer.isSuccess !== `boolean` || typeof answer.timeSpent !== `number` || typeof currentAttempts !== `number`) {
+  if (typeof answer.isCorrect !== `boolean` || typeof answer.timeLeft !== `number` || typeof currentAttempts !== `number`) {
     throw new Error(`Incorrect arguments type`);
   }
   const tempAnswer = Object.assign({}, answer);
@@ -42,7 +56,7 @@ const updateAttempts = (answer, currentAttempts) => {
     throw new Error(`Incorrect arguments values`);
   }
 
-  if (!tempAnswer.isSuccess) {
+  if (!tempAnswer.isCorrect) {
     tempCurrentAttempts--;
   }
   return tempCurrentAttempts;
@@ -70,12 +84,29 @@ function Timer(maxTimeInSeconds) {
   };
 }
 
-const updateGameData = (answer, gameObject) => {
-  return Object.assign({}, gameObject);
+const updateGameHistory = (levelResult, gameObject) => {
+  const updatedGame = Object.assign({}, gameObject);
+  updatedGame.levelResultHistory.push(levelResult);
+  return updatedGame;
 };
 
 const saveGameData = () => {
-  return `awsome server post method`;
+  return `awsome server HTTP post method`;
 };
 
-export {calculateGameScore, updateAttempts, Timer, updateGameData, saveGameData};
+const getNextScreen = (currentScreen, screensArray) => {
+  if (typeof currentScreen !== `object` || !Array.isArray(screensArray)) {
+    throw new Error(`incorrect arguments types`);
+  }
+  const tempCurrentScreen = currentScreen;
+  const tempScreenArray = screensArray.map((item) => item);
+  if (!tempScreenArray.some((item) => item === tempCurrentScreen)) {
+    throw new Error(`argument value out of range`);
+  }
+  let nextScreenId = tempScreenArray.indexOf(tempCurrentScreen) + 1;
+  nextScreenId = (nextScreenId > tempScreenArray.length - 1) ? -1 : nextScreenId;
+
+  return nextScreenId;
+};
+
+export {calculateTotalGameScore, updateAttempts, Timer, updateGameHistory, saveGameData, getNextScreen, calculateDetailedStats};

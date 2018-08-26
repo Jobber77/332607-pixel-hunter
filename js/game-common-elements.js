@@ -13,8 +13,8 @@ ${new Array(currentStats.hp)
 </div>
 </header>`;
 
-const generateFooterStatsHtml = (answersHistory) => {
-  const tempAnswers = answersHistory.map((item) => Object.assign({}, item));
+const generateFooterStatsHtml = (levelResultHistory) => {
+  const tempAnswers = levelResultHistory ? levelResultHistory.map((item) => Object.assign({}, item)) : [];
   return `<ul class="stats">
   ${tempAnswers.map((item) => `<li class="stats__result ${getHtmlClass(item)}"></li>`).join(``)}
   ${new Array(10 - tempAnswers.length).fill(`<li class="stats__result stats__result--unknown"></li>`).join(``)}
@@ -23,11 +23,11 @@ const generateFooterStatsHtml = (answersHistory) => {
 
 const getHtmlClass = (answer) => {
   let string = ``;
-  if (answer.isCorret && answer.timeLeft <= 10) {
+  if (answer.isCorreсt && answer.timeLeft <= 10) {
     string = `stats__result--slow`;
-  } else if (answer.isCorret && answer.timeLeft >= 20) {
+  } else if (answer.isCorrect && answer.timeLeft >= 20) {
     string = `stats__result--fast`;
-  } else if (answer.isCorret) {
+  } else if (answer.isCorrect) {
     string = `stats__result--correct`;
   } else {
     string = `stats__result--wrong`;

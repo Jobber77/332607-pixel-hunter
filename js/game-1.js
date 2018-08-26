@@ -1,12 +1,10 @@
 import {createDOMElement, showScreen} from './util.js';
-import {assignBackButtonListener, killBackButtonListener} from './game-navigation';
-import {updateGameData} from './game-statistics-service';
+import {assignBackButtonListener, killBackButtonListener, nextScreenCallHandler} from './game-navigation';
 import {generateHeaderStatsHtml, generateFooterStatsHtml} from './game-common-elements';
-import buildNextScreen from './game-2.js';
 
 const generateHtml = (currentGame) => `
-<section class="game">
 ${generateHeaderStatsHtml(currentGame.currentStats)}
+<section class="game">
 <p class="game__task">${currentGame.questions[currentGame.currentQuestion].text}</p>
 <form class="game__content">
   <div class="game__option">
@@ -32,11 +30,13 @@ ${generateHeaderStatsHtml(currentGame.currentStats)}
     </label>
   </div>
 </form>
-${generateFooterStatsHtml(currentGame.answersHistory)}
+${generateFooterStatsHtml(currentGame.levelResultHistory)}
 </section>`;
 let radioButtons;
+let firstOptionRadio;
+let secondOptionRadio;
 let currentGame;
-let answer = {isCorrect: false, timeLeft: 15};
+let levelResult = {isCorrect: false, timeLeft: 15};
 
 const assignListeners = () => {
   radioButtons = Array.from(document.querySelectorAll(`input[type=radio]`));
@@ -50,19 +50,29 @@ const killListeners = () => {
 };
 
 const onNextScreenCall = () => {
-  const firstOptionRadio = radioButtons.filter((item) => item.name === `question1`);
-  const secondOptionRadio = radioButtons.filter((item) => item.name === `question2`);
+  firstOptionRadio = radioButtons.filter((item) => item.name === `question1`);
+  secondOptionRadio = radioButtons.filter((item) => item.name === `question2`);
   if ((firstOptionRadio.some((element) => element.checked === true))
         && secondOptionRadio.some((element) => element.checked === true)) {
-    killListeners();
-    buildNextScreen(updateGameData(answer, currentGame));
+    nextScreenCallHandler(currentGame, levelResult, validateAnswer, killListeners);
   }
 };
 
-export default (gameObject) => {
+const validateAnswer = (answers, result) => {
+  const chosenAnswer1 = firstOptionRadio.filter((item) => item.checked === true)[0];
+  const chosenAnswer2 = secondOptionRadio.filter((item) => item.checked === true)[0];
+  const correctAnswer1 = answers[0].isPainting ? `paint` : `photo`;
+  const correctAnswer2 = answers[1].isPainting ? `paint` : `photo`;
+  const validationResult = (chosenAnswer1.value === correctAnswer1) && (chosenAnswer2.value === correctAnswer2);
+  return Object.assign({}, result, {isCorrect: validationResult});
+};
+
+const renderScreen = (gameObject) => {
   currentGame = Object.assign({}, gameObject);
   const element = createDOMElement(`div`, ``, generateHtml(currentGame));
   showScreen(element);
   assignListeners();
   return document.querySelector(`#main > div`);
 };
+
+export default renderScreen;

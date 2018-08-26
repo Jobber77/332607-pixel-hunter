@@ -1,5 +1,4 @@
 import {createDOMElement, showScreen} from './util';
-import buildNextScreen from './game-1';
 import {assignBackButtonListener, killBackButtonListener, backButtonHtml} from './game-navigation';
 import {generateNewGameObject} from './game-data';
 
@@ -49,7 +48,9 @@ const onRulesInputClick = (evt) => {
 
 const onNextScreenCall = () => {
   killListeners();
-  buildNextScreen(generateNewGameObject(playerName));
+  const newGame = generateNewGameObject(playerName);
+  const nextScreenType = newGame.questions[newGame.currentQuestion].type;
+  newGame.gameScreensRenderers[nextScreenType](newGame);
 };
 
 export default () => {

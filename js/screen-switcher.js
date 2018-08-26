@@ -1,5 +1,5 @@
-const nextScreen = (currentScreen, screensArray) => {
-  if (typeof currentScreen !== `number` || !Array.isArray(screensArray)) {
+const getNextScreen = (currentScreen, screensArray) => {
+  if (typeof currentScreen !== `object` || !Array.isArray(screensArray)) {
     throw new Error(`incorrect arguments types`);
   }
   const tempCurrentScreen = currentScreen;
@@ -13,4 +13,4 @@ const nextScreen = (currentScreen, screensArray) => {
   return tempScreenArray[nextScreenId];
 };
 
-export {nextScreen};
+export {getNextScreen};
