@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import {calculateGameScore, updateAttempts, Timer} from './game-statistics';
+import {calculateGameScore, updateAttempts, Timer} from './game-statistics-service';
 
 const defaultAnswers = [{isSuccess: true, timeSpent: 15},
   {isSuccess: true, timeSpent: 15},
