@@ -1,7 +1,7 @@
-import {createDOMElement, showScreen} from './util.js';
-import {screen as rulesScreen, assignListeners as assignRulesListeners} from './rules.js';
+import {createDOMElement, showScreen, converClassListToString} from './util.js';
+import buildNextScreen from './rules.js';
 
-const GREETING_SCREEN_HTML = `<img class="greeting__logo" src="img/logo_ph-big.svg" width="201" height="89" alt="Pixel Hunter">
+const SCREEN_HTML = `<img class="greeting__logo" src="img/logo_ph-big.svg" width="201" height="89" alt="Pixel Hunter">
 <div class="greeting__asterisk asterisk"><span class="visually-hidden">Я просто красивая звёздочка</span>*</div>
 <div class="greeting__challenge">
   <h3 class="greeting__challenge-title">Лучшие художники-фотореалисты бросают тебе вызов!</h3>
@@ -19,8 +19,13 @@ const GREETING_SCREEN_HTML = `<img class="greeting__logo" src="img/logo_ph-big.s
     <use xlink:href="img/sprite.svg#arrow-right"></use>
   </svg>
 </button>`;
+const WRAPPER_CLASSLIST = [`greeting`, `central--blur`];
 let nextScreenButton;
 
+const onNextScreenCall = () => {
+  killListeners();
+  buildNextScreen();
+};
 
 const assignListeners = () => {
   nextScreenButton = document.querySelector(`.greeting__continue`);
@@ -31,12 +36,9 @@ const killListeners = () => {
   nextScreenButton.removeEventListener(`click`, onNextScreenCall);
 };
 
-const onNextScreenCall = () => {
-  killListeners();
-  showScreen(rulesScreen);
-  assignRulesListeners();
+export default () => {
+  const element = createDOMElement(`section`, WRAPPER_CLASSLIST, SCREEN_HTML);
+  showScreen(element);
+  assignListeners();
+  return document.querySelector(converClassListToString(WRAPPER_CLASSLIST));
 };
-
-const screen = createDOMElement(`section`, [`greeting`, `central--blur`], GREETING_SCREEN_HTML);
-
-export {screen, assignListeners};

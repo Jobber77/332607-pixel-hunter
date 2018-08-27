@@ -1,55 +1,32 @@
-import {createDOMElement, showScreen} from './util.js';
-import {screen as statsScreen, assignListeners as assignStatsListeners} from './stats.js';
-import {assignBackButtonListener, killBackButtonListener} from './game-navigation';
+import {createDOMElement, showScreen} from './util';
+import {assignBackButtonListener, killBackButtonListener, nextScreenCallHandler} from './game-navigation';
+import {generateHeaderStatsHtml, generateFooterStatsHtml} from './game-common-elements';
 
-const GAME3_SCREEN_HTML = `<header class="header">
-<button class="back">
-  <span class="visually-hidden">Вернуться к началу</span>
-  <svg class="icon" width="45" height="45" viewBox="0 0 45 45" fill="#000000">
-    <use xlink:href="img/sprite.svg#arrow-left"></use>
-  </svg>
-  <svg class="icon" width="101" height="44" viewBox="0 0 101 44" fill="#000000">
-    <use xlink:href="img/sprite.svg#logo-small"></use>
-  </svg>
-</button>
-<div class="game__timer">NN</div>
-<div class="game__lives">
-  <img src="img/heart__empty.svg" class="game__heart" alt="Life" width="31" height="27">
-  <img src="img/heart__full.svg" class="game__heart" alt="Life" width="31" height="27">
-  <img src="img/heart__full.svg" class="game__heart" alt="Life" width="31" height="27">
-</div>
-</header>
+
+const generateHtml = (currentGame) => `
+${generateHeaderStatsHtml(currentGame.currentStats)}
 <section class="game">
-<p class="game__task">Найдите рисунок среди изображений</p>
+<p class="game__task">${currentGame.questions[currentGame.currentQuestion].text}</p>
 <form class="game__content  game__content--triple">
   <div class="game__option">
-    <img src="http://placehold.it/304x455" alt="Option 1" width="304" height="455">
+    <img src="${currentGame.questions[currentGame.currentQuestion].answers[0].imgLink}" alt="Option 1" width="304" height="455">
   </div>
   <div class="game__option  game__option--selected">
-    <img src="http://placehold.it/304x455" alt="Option 2" width="304" height="455">
+    <img src="${currentGame.questions[currentGame.currentQuestion].answers[1].imgLink}" alt="Option 2" width="304" height="455">
   </div>
   <div class="game__option">
-    <img src="http://placehold.it/304x455" alt="Option 3" width="304" height="455">
+    <img src="${currentGame.questions[currentGame.currentQuestion].answers[2].imgLink}" alt="Option 3" width="304" height="455">
   </div>
 </form>
-<ul class="stats">
-  <li class="stats__result stats__result--wrong"></li>
-  <li class="stats__result stats__result--slow"></li>
-  <li class="stats__result stats__result--fast"></li>
-  <li class="stats__result stats__result--correct"></li>
-  <li class="stats__result stats__result--wrong"></li>
-  <li class="stats__result stats__result--unknown"></li>
-  <li class="stats__result stats__result--slow"></li>
-  <li class="stats__result stats__result--unknown"></li>
-  <li class="stats__result stats__result--fast"></li>
-  <li class="stats__result stats__result--unknown"></li>
-</ul>
+${generateFooterStatsHtml(currentGame.levelResultHistory)}
 </section>`;
+let currentGame;
 let nextScreenButtons;
+let levelResult = {isCorrect: false, timeLeft: 15};
 
 const assignListeners = () => {
-  nextScreenButtons = document.querySelectorAll(`.game__option`);
-  Array.from(nextScreenButtons).forEach((item) => item.addEventListener(`click`, onNextScreenCall));
+  nextScreenButtons = Array.from(document.querySelectorAll(`.game__option`));
+  nextScreenButtons.forEach((item) => item.addEventListener(`click`, onNextScreenCall));
   assignBackButtonListener();
 };
 
@@ -58,12 +35,28 @@ const killListeners = () => {
   killBackButtonListener();
 };
 
-const onNextScreenCall = () => {
-  killListeners();
-  showScreen(statsScreen);
-  assignStatsListeners();
+const onNextScreenCall = (evt) => {
+  nextScreenButtons.forEach((item) => item.classList.remove(`game__option--selected`));
+  evt.target.closest(`div`).classList.add(`game__option--selected`);
+  nextScreenCallHandler(currentGame, levelResult, validateAnswer, killListeners);
 };
 
-const screen = createDOMElement(`div`, ``, GAME3_SCREEN_HTML);
+const validateAnswer = (answers, result) => {
+  const chosenAnswer = nextScreenButtons.filter((item) => Array.from(item.classList)
+                                                                .some((entry) => entry === `game__option--selected`))[0];
+  const chosenAnswerId = nextScreenButtons.indexOf(chosenAnswer);
+  const correctAnswer = answers.filter((item)=>item.isPainting === true)[0];
+  const correctAnswerId = answers.indexOf(correctAnswer);
+  const validationResult = chosenAnswerId === correctAnswerId;
+  return Object.assign({}, result, {isCorrect: validationResult});
+};
 
-export {assignListeners, screen};
+const renderScreen = (gameObject) => {
+  currentGame = Object.assign({}, gameObject);
+  const element = createDOMElement(`div`, ``, generateHtml(currentGame));
+  showScreen(element);
+  assignListeners();
+  return document.querySelector(`#main > div`);
+};
+
+export default renderScreen;

@@ -1,17 +1,9 @@
-import {createDOMElement, showScreen} from './util.js';
-import {screen as game1Screen, assignListeners as assignGame1Listeners} from './game-1.js';
-import {assignBackButtonListener, killBackButtonListener} from './game-navigation.js';
+import {createDOMElement, showScreen} from './util';
+import {assignBackButtonListener, killBackButtonListener, backButtonHtml} from './game-navigation';
+import {generateNewGameObject} from './game-data';
 
-const RULES_SCREEN_HTML = `<header class="header">
-<button class="back">
-  <span class="visually-hidden">Вернуться к началу</span>
-  <svg class="icon" width="45" height="45" viewBox="0 0 45 45" fill="#000000">
-    <use xlink:href="img/sprite.svg#arrow-left"></use>
-  </svg>
-  <svg class="icon" width="101" height="44" viewBox="0 0 101 44" fill="#000000">
-    <use xlink:href="img/sprite.svg#logo-small"></use>
-  </svg>
-</button>
+const generateHtml = () => `<header class="header">
+${backButtonHtml}
 </header>
 <section class="rules">
 <h2 class="rules__title">Правила</h2>
@@ -31,6 +23,7 @@ const RULES_SCREEN_HTML = `<header class="header">
 </section>`;
 let nextScreenButton;
 let rulesInput;
+let playerName = ``;
 
 const assignListeners = () => {
   nextScreenButton = document.querySelector(`.rules__button`);
@@ -48,14 +41,21 @@ const killListeners = () => {
 const onRulesInputClick = (evt) => {
   const enable = evt.target.value.length > 0;
   nextScreenButton.disabled = !enable;
+  if (enable) {
+    playerName = evt.target.value;
+  }
 };
 
 const onNextScreenCall = () => {
   killListeners();
-  showScreen(game1Screen);
-  assignGame1Listeners();
+  const newGame = generateNewGameObject(playerName);
+  const nextScreenType = newGame.questions[newGame.currentQuestion].type;
+  newGame.gameScreensRenderers[nextScreenType](newGame);
 };
 
-const screen = createDOMElement(`div`, ``, RULES_SCREEN_HTML);
-
-export {screen, assignListeners};
+export default () => {
+  const element = createDOMElement(`div`, ``, generateHtml());
+  showScreen(element);
+  assignListeners();
+  return document.querySelector(`#main > div`);
+};
