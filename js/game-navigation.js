@@ -16,14 +16,11 @@ const BACK_BUTTON_HTML = `<button class="back">
 const onBackButtonClick = () => {
   buildIntroScreen();
 };
-const assignBackButtonListener = (isGameEnd) => {
-  backButton = document.querySelector(`.back`);
+const assignBackButtonListener = (element) => {
+  backButton = element ? element.querySelector(`.back`) : document.querySelector(`.back`);
   backButton.addEventListener(`click`, onBackButtonClick);
-  //  let GK kill listener later after screen change
-  if (isGameEnd) {
-    backButton = null;
-  }
 };
+
 const killBackButtonListener = () => {
   backButton.removeEventListener(`click`, onBackButtonClick);
 };

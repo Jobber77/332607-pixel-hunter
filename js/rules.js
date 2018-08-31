@@ -1,61 +1,29 @@
-import {createDOMElement, showScreen} from './util';
-import {assignBackButtonListener, killBackButtonListener, backButtonHtml} from './game-navigation';
+import {showScreen} from './util';
+import RulesView from './views/rules-view';
 import {generateNewGameObject} from './game-data';
 
-const generateHtml = () => `<header class="header">
-${backButtonHtml}
-</header>
-<section class="rules">
-<h2 class="rules__title">Правила</h2>
-<ul class="rules__description">
-  <li>Угадай 10 раз для каждого изображения фото
-    <img class="rules__icon" src="img/icon-photo.png" width="32" height="31" alt="Фото"> или рисунок
-    <img class="rules__icon" src="img/icon-paint.png" width="32" height="31" alt="Рисунок"></li>
-  <li>Фотографиями или рисунками могут быть оба изображения.</li>
-  <li>На каждую попытку отводится 30 секунд.</li>
-  <li>Ошибиться можно не более 3 раз.</li>
-</ul>
-<p class="rules__ready">Готовы?</p>
-<form class="rules__form">
-  <input class="rules__input" type="text" placeholder="Ваше Имя">
-  <button class="rules__button  continue" type="submit" disabled>Go!</button>
-</form>
-</section>`;
-let nextScreenButton;
-let rulesInput;
+let view;
 let playerName = ``;
-
-const assignListeners = () => {
-  nextScreenButton = document.querySelector(`.rules__button`);
-  rulesInput = document.querySelector(`.rules__input`);
-  rulesInput.addEventListener(`input`, onRulesInputClick);
-  nextScreenButton.addEventListener(`click`, onNextScreenCall);
-  assignBackButtonListener();
-};
-
-const killListeners = () => {
-  nextScreenButton.removeEventListener(`click`, onNextScreenCall);
-  killBackButtonListener();
-};
 
 const onRulesInputClick = (evt) => {
   const enable = evt.target.value.length > 0;
-  nextScreenButton.disabled = !enable;
+  view._nextScreenButton.disabled = !enable;
   if (enable) {
     playerName = evt.target.value;
   }
 };
 
 const onNextScreenCall = () => {
-  killListeners();
+  view.removeListeners();
   const newGame = generateNewGameObject(playerName);
   const nextScreenType = newGame.questions[newGame.currentQuestion].type;
   newGame.gameScreensRenderers[nextScreenType](newGame);
 };
 
 export default () => {
-  const element = createDOMElement(`div`, ``, generateHtml());
-  showScreen(element);
-  assignListeners();
-  return document.querySelector(`#main > div`);
+  view = new RulesView();
+  view.onNextScreenCall = onNextScreenCall;
+  view.onRulesInputClick = onRulesInputClick;
+  showScreen(view.element);
+  return view.element;
 };
