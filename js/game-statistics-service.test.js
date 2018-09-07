@@ -1,16 +1,16 @@
 import {assert} from 'chai';
-import {calculateGameScore, updateAttempts, Timer} from './game-statistics-service';
+import {calculateTotalGameScore, updateAttempts, Timer} from './game-statistics-service';
 
-const defaultAnswers = [{isSuccess: true, timeSpent: 15},
-  {isSuccess: true, timeSpent: 15},
-  {isSuccess: true, timeSpent: 15},
-  {isSuccess: true, timeSpent: 15},
-  {isSuccess: true, timeSpent: 15},
-  {isSuccess: true, timeSpent: 15},
-  {isSuccess: true, timeSpent: 15},
-  {isSuccess: true, timeSpent: 15},
-  {isSuccess: true, timeSpent: 15},
-  {isSuccess: true, timeSpent: 15}];
+const defaultAnswers = [{isCorrect: true, timeLeft: 15},
+  {isCorrect: true, timeLeft: 15},
+  {isCorrect: true, timeLeft: 15},
+  {isCorrect: true, timeLeft: 15},
+  {isCorrect: true, timeLeft: 15},
+  {isCorrect: true, timeLeft: 15},
+  {isCorrect: true, timeLeft: 15},
+  {isCorrect: true, timeLeft: 15},
+  {isCorrect: true, timeLeft: 15},
+  {isCorrect: true, timeLeft: 15}];
 const MAX_TIME_FOR_ANSWER = 30;
 
 describe(`startTimer tests`, () => {
@@ -32,66 +32,66 @@ describe(`startTimer tests`, () => {
 describe(`updateAttempts tests`, () => {
   it(`throw if incorrect arguments types passed`, () => {
     assert.throw(() => updateAttempts({}), `Incorrect arguments type`);
-    assert.throw(() => updateAttempts({isSuccess: true, timeSpent: `a`}), `Incorrect arguments type`);
-    assert.throw(() => updateAttempts({isSuccess: 1, timeSpent: 1}), `Incorrect arguments type`);
+    assert.throw(() => updateAttempts({isCorrect: true, timeLeft: `a`}), `Incorrect arguments type`);
+    assert.throw(() => updateAttempts({isCorrect: 1, timeLeft: 1}), `Incorrect arguments type`);
     assert.throw(() => updateAttempts(123, `123`), `Incorrect arguments type`);
   });
   it(`throw if incorrect arguments values passed`, () => {
-    assert.throw(() => updateAttempts({isSuccess: true, timeSpent: MAX_TIME_FOR_ANSWER}, -1), `Incorrect arguments values`);
-    assert.throw(() => updateAttempts({isSuccess: 1, timeSpent: 1}), `Incorrect arguments type`);
+    assert.throw(() => updateAttempts({isCorrect: true, timeLeft: MAX_TIME_FOR_ANSWER}, -1), `Incorrect arguments values`);
+    assert.throw(() => updateAttempts({isCorrect: 1, timeLeft: 1}), `Incorrect arguments type`);
     assert.throw(() => updateAttempts(123, `123`), `Incorrect arguments type`);
   });
   it(`return decreased attempts number if answer is incorrect`, () => {
-    assert.strictEqual(updateAttempts({isSuccess: false, timeSpent: 2}, 3), 2);
-    assert.strictEqual(updateAttempts({isSuccess: false, timeSpent: 1}, 1), 0);
-    assert.strictEqual(updateAttempts({isSuccess: false, timeSpent: 0}, 0), -1);
+    assert.strictEqual(updateAttempts({isCorrect: false, timeLeft: 2}, 3), 2);
+    assert.strictEqual(updateAttempts({isCorrect: false, timeLeft: 1}, 1), 0);
+    assert.strictEqual(updateAttempts({isCorrect: false, timeLeft: 0}, 0), -1);
   });
   it(`return back passed amount of attemptsif answer is correct`, () => {
-    assert.strictEqual(updateAttempts({isSuccess: true, timeSpent: 2}, 3), 3);
-    assert.strictEqual(updateAttempts({isSuccess: true, timeSpent: 10500}, 1), 1);
+    assert.strictEqual(updateAttempts({isCorrect: true, timeLeft: 2}, 3), 3);
+    assert.strictEqual(updateAttempts({isCorrect: true, timeLeft: 10500}, 1), 1);
   });
 });
 
-describe(`calculateGameScore tests`, () => {
+describe(`calculateTotalGameScore tests`, () => {
   it(`throw if incorrect arguments types passed`, () => {
-    assert.throw(() => calculateGameScore(``, 1234), `Incorrect arguments types`);
-    assert.throw(() => calculateGameScore([], {}), `Incorrect arguments types`);
-    assert.throw(() => calculateGameScore(``, ``), `Incorrect arguments types`);
+    assert.throw(() => calculateTotalGameScore(``, 1234), `Incorrect arguments types`);
+    assert.throw(() => calculateTotalGameScore([], {}), `Incorrect arguments types`);
+    assert.throw(() => calculateTotalGameScore(``, ``), `Incorrect arguments types`);
   });
   it(`throw if incorrect arguments values passed`, () => {
-    assert.throw(() => calculateGameScore([], 1234), `Incorrect arguments values`);
-    assert.throw(() => calculateGameScore([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], 3), `Incorrect arguments values`);
-    assert.throw(() => calculateGameScore([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], 10500), `Incorrect arguments values`);
+    assert.throw(() => calculateTotalGameScore([], 1234), `Incorrect arguments values`);
+    assert.throw(() => calculateTotalGameScore([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], 3), `Incorrect arguments values`);
+    assert.throw(() => calculateTotalGameScore([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}], 10500), `Incorrect arguments values`);
   });
   it(`throw if incosistent arguments values passed`, () => {
     const tempArray = defaultAnswers.map((item) => Object.assign({}, item));
     for (let i = 0; i < 3; i++) {
-      tempArray[i].isSuccess = false;
+      tempArray[i].isCorrect = false;
     }
-    assert.throw(() => calculateGameScore(tempArray, 2), `Inconsistent arguments`);
+    assert.throw(() => calculateTotalGameScore(tempArray, 2), `Inconsistent arguments`);
   });
-  it(`returns -1 if game is failed (array of anwers contains less then 10 objects)`, () => {
+  it(`returns 0 if game is failed (array of anwers contains less then 10 objects)`, () => {
     let tempArray = defaultAnswers.map((item) => Object.assign({}, item));
     for (let i = 0; i < 3; i++) {
-      tempArray[i].isSuccess = false;
+      tempArray[i].isCorrect = false;
     }
     tempArray.length = tempArray.length - 1;
 
-    assert.strictEqual(calculateGameScore(tempArray, 0), -1);
+    assert.strictEqual(calculateTotalGameScore(tempArray, 0), 0);
   });
   it(`returns correct amount of points`, () => {
     let tempArray = defaultAnswers.map((item) => Object.assign({}, item));
-    assert.strictEqual(calculateGameScore(tempArray, 3), 1150);
+    assert.strictEqual(calculateTotalGameScore(tempArray, 3), 1150);
 
-    tempArray = defaultAnswers.map((item) => Object.assign({}, item, {timeSpent: 0}));
-    assert.strictEqual(calculateGameScore(tempArray, 3), 1650);
+    tempArray = defaultAnswers.map((item) => Object.assign({}, item, {timeLeft: 30}));
+    assert.strictEqual(calculateTotalGameScore(tempArray, 3), 1650);
 
-    tempArray = defaultAnswers.map((item) => Object.assign({}, item, {timeSpent: 30}));
-    assert.strictEqual(calculateGameScore(tempArray, 3), 650);
+    tempArray = defaultAnswers.map((item) => Object.assign({}, item, {timeLeft: 0}));
+    assert.strictEqual(calculateTotalGameScore(tempArray, 3), 650);
 
     tempArray = defaultAnswers.map((item) => Object.assign({}, item));
-    tempArray[0].isSuccess = false;
-    tempArray[1].timeSpent = 21;
-    assert.strictEqual(calculateGameScore(tempArray, 2), 950);
+    tempArray[0].isCorrect = false;
+    tempArray[1].timeLeft = 21;
+    assert.strictEqual(calculateTotalGameScore(tempArray, 2), 1050);
   });
 });

@@ -2,8 +2,7 @@ const mainScreen = document.querySelector(`#main`);
 
 const showScreen = (screenToShow) => {
   const fragment = document.createDocumentFragment();
-  const clonnedScreen = screenToShow.cloneNode(true);
-  fragment.appendChild(clonnedScreen);
+  fragment.appendChild(screenToShow);
   mainScreen.innerHTML = ``;
   mainScreen.appendChild(fragment);
 };

@@ -22,7 +22,7 @@ const calculateTotalGameScore = (answersArray, unusedAttempts) => {
   }
 
   clonnedArray.forEach((answer) => {
-    score += answer.isSuccess ? 100 : 0;
+    score += answer.isCorrect ? 100 : 0;
     score += answer.timeLeft >= FAST_TIMELIMIT ? 50 : 0;
     score += answer.timeLeft <= SLOW_TIMELIMIT ? -50 : 0;
   });
