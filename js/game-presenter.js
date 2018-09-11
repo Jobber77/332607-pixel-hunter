@@ -6,7 +6,7 @@ import Application from './application';
 
 const TIME_IS_UP_SOON_SECONDS = 5;
 
-export default class GameBasePresenter {
+export default class GamePresenter {
   constructor(gameData) {
     this._gameData = gameData;
     this._viewBackButton = new BackButtonPartialView();

@@ -1,7 +1,7 @@
-import GameBasePresenter from './game-base-presenter';
+import GamePresenter from './game-presenter';
 import Game1View from './views/game-1-view.js';
 
-export default class GameType1Presenter extends GameBasePresenter {
+export default class GameType1Presenter extends GamePresenter {
   constructor(gameData) {
     super(gameData);
     this._viewBody = new Game1View(this._gameData.currentQuestion);
