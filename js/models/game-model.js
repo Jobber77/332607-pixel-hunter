@@ -1,12 +1,7 @@
-import typeOne from './game-2';
-import typeTwo from './game-1';
-import typeThree from './game-3';
-import resultScreen from './stats';
-
 const initialGameObject = {
   playerName: ``,
   isWin: false,
-  currentQuestion: 0,
+  currentQuestionId: 0,
   questions: [
     {
       type: `two`,
@@ -151,22 +146,45 @@ const initialGameObject = {
   ],
   currentStats: {
     hp: 3,
-    timeLeft: 15
+    timeLeft: 30
   },
-  levelResultHistory: [],
-  gameScreensRenderers: {
-    one: typeOne,
-    two: typeTwo,
-    three: typeThree,
-    result: resultScreen
+  levelResultHistory: []
+};
+
+export default class GameModel {
+  constructor(initialGameState) {
+    this._gameState = initialGameState;
   }
-};
-
-const generateNewGameObject = (playerName) => {
-  const newGame = JSON.parse(JSON.stringify(initialGameObject));
-  newGame.playerName = playerName;
-  newGame.gameScreensRenderers = initialGameObject.gameScreensRenderers;
-  return newGame;
-};
-
-export {generateNewGameObject};
+  get gameState() {
+    return this._gameState;
+  }
+  get currentStats() {
+    return this._gameState.currentStats;
+  }
+  get levelResultHistory() {
+    return this._gameState.levelResultHistory;
+  }
+  get currentQuestionType() {
+    return this.currentQuestion.type;
+  }
+  get currentQuestionId() {
+    return this._gameState.currentQuestionId;
+  }
+  set currentQuestionId(value) {
+    this._gameState.currentQuestionId = value;
+  }
+  get currentQuestion() {
+    return this._gameState.questions[this.currentQuestionId];
+  }
+  get currentQuestionAnswers() {
+    return this._gameState.questions[this.currentQuestionId].answers;
+  }
+  get nextQuestionId() {
+    let nextScreenId = this._gameState.currentQuestionId + 1;
+    nextScreenId = (nextScreenId > this._gameState.questions.length - 1) ? -1 : nextScreenId;
+    return nextScreenId;
+  }
+  static generateNewGameData() {
+    return JSON.parse(JSON.stringify(initialGameObject));
+  }
+}
