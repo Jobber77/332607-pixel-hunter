@@ -1,5 +1,4 @@
 import AbstractView from './abstract-view';
-import {assignBackButtonListener, killBackButtonListener, backButtonHtml} from '../game-navigation';
 
 export default class RulesView extends AbstractView {
   constructor() {
@@ -7,9 +6,7 @@ export default class RulesView extends AbstractView {
   }
 
   get template() {
-    return `<header class="header">
-    ${backButtonHtml}
-    </header>
+    return `
     <section class="rules">
     <h2 class="rules__title">Правила</h2>
     <ul class="rules__description">
@@ -29,16 +26,14 @@ export default class RulesView extends AbstractView {
   }
 
   assignListeners() {
-    this._nextScreenButton = this.element.querySelector(`.rules__button`);
-    this._nextScreenButton.addEventListener(`click`, this.onNextScreenCall);
+    this.nextScreenButton = this.element.querySelector(`.rules__button`);
+    this.nextScreenButton.addEventListener(`click`, this.onNextScreenCall);
     this._rulesInput = this.element.querySelector(`.rules__input`);
     this._rulesInput.addEventListener(`input`, this.onRulesInputClick);
-    assignBackButtonListener(this.element);
   }
 
   removeListeners() {
-    this._nextScreenButton.removeEventListener(`click`, this.onNextScreenCall);
-    killBackButtonListener();
+    this.nextScreenButton.removeEventListener(`click`, this.onNextScreenCall);
   }
 
   onNextScreenCall() {
