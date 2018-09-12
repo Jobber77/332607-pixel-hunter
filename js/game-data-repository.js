@@ -24,7 +24,7 @@ export default class GameDataRepository {
 
   }
 
-  static uploadCurrentResult(levelResultHistory) {
+  static uploadCurrentResult() {
 
   }
 }
