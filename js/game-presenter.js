@@ -9,7 +9,7 @@ const TIME_IS_UP_SOON_SECONDS = 5;
 export default class GamePresenter {
   constructor(gameData) {
     this._gameData = gameData;
-    this._viewBackButton = new BackButtonPartialView();
+    this._viewBackButton = new BackButtonPartialView(this.stop.bind(this));
     this._viewHeaderStats = new HeaderStatsPartialView(this._gameData.currentStats);
     this._viewFooterStats = new FooterPartialView(this._gameData.levelResultHistory);
     this._header = createDOMElement(`header`, [`header`], ``);
@@ -29,9 +29,7 @@ export default class GamePresenter {
     this.validateAnswer();
     this.updateAttempts(this.levelResult);
     this.updateGameHistory(this.levelResult);
-    this._viewBody.removeListeners();
-    this._viewBackButton.removeListeners();
-    clearInterval(this._interval);
+    this.stop();
     if (this._gameData.currentStats.hp <= -1) {
       Application.showStats(this._gameData);
     } else {
@@ -61,6 +59,12 @@ export default class GamePresenter {
       this.tick();
       this.updateHeader();
     }, 1000);
+  }
+
+  stop() {
+    clearInterval(this._interval);
+    this._viewBody.removeListeners();
+    this._viewBackButton.removeListeners();
   }
 
   updateHeader() {

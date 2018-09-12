@@ -6,19 +6,26 @@ import GameType1Presenter from './game-type1-presenter';
 import GameType2Presenter from './game-type2-presenter';
 import GameType3Presenter from './game-type3-presenter';
 import StatsPresenter from './stats-presenter';
+import GameDataRepository from './game-data-repository';
+import ErrorView from './views/error-view';
+
+let questionsData;
 
 export default class Application {
-
   static showIntro() {
     const presenter = new IntroPresenter();
     showScreen(presenter.element);
+    const promise = GameDataRepository.fetchQuestionsData();
+    promise.catch(Application.showError).
+            then(this.showGreeting());
   }
   static showGreeting() {
     const presenter = new GreetingsPresenter();
     showScreen(presenter.element);
   }
   static showRules() {
-    const presenter = new RulesPresenter();
+    const questionsCopy = JSON.parse(JSON.stringify(questionsData));
+    const presenter = new RulesPresenter(questionsCopy);
     showScreen(presenter.element);
   }
   static showGame(gameData) {
@@ -44,4 +51,15 @@ export default class Application {
     showScreen(presenter.element);
   }
 
+  static showError(error) {
+    const errorView = new ErrorView(error);
+    showScreen(errorView.element);
+  }
+
+  static saveQuestionsData(questions) {
+    questionsData = questions;
+  }
+  static getQuestionsData() {
+    return questionsData;
+  }
 }

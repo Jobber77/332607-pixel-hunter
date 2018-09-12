@@ -24,7 +24,9 @@ export default class GameType3Presenter extends GamePresenter {
     const chosenAnswer = this._viewBody.answerButtons.filter((item) => Array.from(item.classList)
                                                                 .some((entry) => entry === `game__option--selected`))[0];
     const chosenAnswerId = this._viewBody.answerButtons.indexOf(chosenAnswer);
-    const correctAnswer = this._gameData.currentQuestionAnswers.filter((item)=>item.isPainting === true)[0];
+    //  define if question is about picture
+    const isPictureSubtype = this._gameData.currentQuestion.text.indexOf(`рисунок`) !== -1;
+    const correctAnswer = this._gameData.currentQuestionAnswers.filter((item)=>item.isPainting === isPictureSubtype)[0];
     const correctAnswerId = this._gameData.currentQuestionAnswers.indexOf(correctAnswer);
     const validationResult = chosenAnswerId === correctAnswerId;
     this.levelResult.isCorrect = validationResult;

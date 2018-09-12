@@ -184,7 +184,7 @@ export default class GameModel {
     nextScreenId = (nextScreenId > this._gameState.questions.length - 1) ? -1 : nextScreenId;
     return nextScreenId;
   }
-  static generateNewGameData() {
+  static generateNewGameStateObject() {
     return JSON.parse(JSON.stringify(initialGameObject));
   }
 }
