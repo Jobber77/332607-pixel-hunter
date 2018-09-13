@@ -54,6 +54,7 @@ export default class GameModel {
 
   static saveFetchedQuestionsData(questions) {
     questionsData = questions;
+    return questions;
   }
   static getFetchedQuestionsData() {
     return questionsData;
