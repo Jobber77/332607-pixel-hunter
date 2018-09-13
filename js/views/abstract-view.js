@@ -9,10 +9,6 @@ export default class AbstractView {
   get template() {
   }
 
-  render(type, classes, textContent) {
-    return createDOMElement(type, classes, this.template, textContent);
-  }
-
   get element() {
     if (this._element) {
       return this._element;
@@ -20,6 +16,10 @@ export default class AbstractView {
     this._element = this.render(this.type, this.classes, this.textContent);
     this.assignListeners();
     return this._element;
+  }
+
+  render(type, classes, textContent) {
+    return createDOMElement(type, classes, this.template, textContent);
   }
 
   assignListeners() {

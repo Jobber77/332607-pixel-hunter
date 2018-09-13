@@ -8,8 +8,7 @@ import GameType3Presenter from './game-type3-presenter';
 import StatsPresenter from './stats-presenter';
 import GameDataRepository from './game-data-repository';
 import ErrorView from './views/error-view';
-
-let questionsData;
+import GameModel from './models/game-model';
 
 export default class Application {
   static showIntro() {
@@ -24,7 +23,7 @@ export default class Application {
     showScreen(presenter.element);
   }
   static showRules() {
-    const questionsCopy = JSON.parse(JSON.stringify(questionsData));
+    const questionsCopy = JSON.parse(JSON.stringify(GameModel.getFetchedQuestionsData()));
     const presenter = new RulesPresenter(questionsCopy);
     showScreen(presenter.element);
   }
@@ -46,20 +45,20 @@ export default class Application {
     presenter.start();
   }
 
-  static showStats(gameData) {
-    const presenter = new StatsPresenter(gameData);
-    showScreen(presenter.element);
+  static showStats(currentGameData) {
+    const playerName = currentGameData.gameState.playerName;
+    const resultToUpload = {
+      hp: currentGameData.hp,
+      levelResultHistory: currentGameData.levelResultHistory,
+    };
+    GameDataRepository.uploadCurrentResult(resultToUpload, playerName).
+    then(() => GameDataRepository.fetchResultsHistory(playerName)).
+    then((historyData) => showScreen(new StatsPresenter(currentGameData, historyData).element)).
+    catch(Application.showError);
   }
 
   static showError(error) {
     const errorView = new ErrorView(error);
     showScreen(errorView.element);
-  }
-
-  static saveQuestionsData(questions) {
-    questionsData = questions;
-  }
-  static getQuestionsData() {
-    return questionsData;
   }
 }

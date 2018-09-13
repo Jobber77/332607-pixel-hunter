@@ -1,9 +1,12 @@
 import {adaptQuestionsData} from './data-adapter';
-import Application from './application';
+import GameModel from './models/game-model';
 
 const Endpoints = {
-  QUESTIONS_ENDPOINT: `https://es.dump.academy/pixel-hunter/questions`
+  QUESTIONS_ENDPOINT: `https://es.dump.academy/pixel-hunter/questions`,
+  RESULTS_ENDPOINT: `https://es.dump.academy/pixel-hunter/stats/:appId-:username`
 };
+
+const APP_ID = 332607;
 
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
@@ -18,13 +21,21 @@ export default class GameDataRepository {
     return window.fetch(Endpoints.QUESTIONS_ENDPOINT).
       then(checkStatus).
       then((response) => response.json()).
-      then((data) => Application.saveQuestionsData(adaptQuestionsData(data)));
+      then((data) => GameModel.saveFetchedQuestionsData(adaptQuestionsData(data)));
   }
-  static fetchResultsHistory() {
-
+  static fetchResultsHistory(playerName) {
+    return fetch(`${Endpoints.RESULTS_ENDPOINT}${APP_ID}-${playerName}`).then(checkStatus).then((res) => res.json());
   }
 
-  static uploadCurrentResult() {
-
+  static uploadCurrentResult(currentResult, playerName) {
+    currentResult = Object.assign({playerName}, currentResult);
+    const requestSettings = {
+      body: JSON.stringify(currentResult),
+      headers: {
+        'Content-Type': `application/json`
+      },
+      method: `POST`
+    };
+    return fetch(`${Endpoints.RESULTS_ENDPOINT}${APP_ID}-${playerName}`, requestSettings).then(checkStatus);
   }
 }

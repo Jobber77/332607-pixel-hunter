@@ -14,15 +14,6 @@ export default class GameType1Presenter extends GamePresenter {
     return this._root;
   }
 
-  onNextScreenCall() {
-    this.firstOptionRadio = this._viewBody.radioButtons.filter((item) => item.name === `question1`);
-    this.secondOptionRadio = this._viewBody.radioButtons.filter((item) => item.name === `question2`);
-    if ((this.firstOptionRadio.some((element) => element.checked === true))
-          && this.secondOptionRadio.some((element) => element.checked === true)) {
-      this.callNextScreen();
-    }
-  }
-
   validateAnswer() {
     const chosenAnswer1 = this.firstOptionRadio ? this.firstOptionRadio.filter((item) => item.checked === true)[0] : ``;
     const chosenAnswer2 = this.secondOptionRadio ? this.secondOptionRadio.filter((item) => item.checked === true)[0] : ``;
@@ -30,5 +21,14 @@ export default class GameType1Presenter extends GamePresenter {
     const correctAnswer2 = this._gameData.currentQuestionAnswers[1].isPainting ? `paint` : `photo`;
     const validationResult = (chosenAnswer1.value === correctAnswer1) && (chosenAnswer2.value === correctAnswer2);
     this.levelResult.isCorrect = validationResult;
+  }
+
+  onNextScreenCall() {
+    this.firstOptionRadio = this._viewBody.radioButtons.filter((item) => item.name === `question1`);
+    this.secondOptionRadio = this._viewBody.radioButtons.filter((item) => item.name === `question2`);
+    if ((this.firstOptionRadio.some((element) => element.checked === true))
+          && this.secondOptionRadio.some((element) => element.checked === true)) {
+      this.callNextScreen();
+    }
   }
 }

@@ -26,7 +26,9 @@ export default class BackButtonPartialView extends AbstractView {
   }
 
   onBackButtonClick() {
-    this._currentPresenterStopper();
+    if (this._currentPresenterStopper) {
+      this._currentPresenterStopper();
+    }
     Application.showGreeting();
   }
 }
