@@ -1,5 +1,5 @@
 import AbstractView from './abstract-view';
-import {calculateDetailedStats, calculateTotalGameScore, checkWinStatus} from '../game-statistics-service';
+import {calculateDetailedStats, calculateTotalGameScore, checkWinStatus, Points} from '../game-statistics-service';
 import FooterPartialView from './footer-partial-view';
 
 const generateLineHtml = (levelResultHistory, unusedAttempts, counter) => {
@@ -20,7 +20,7 @@ const generateLineHtml = (levelResultHistory, unusedAttempts, counter) => {
     ${new FooterPartialView(levelResultHistory).template}
   </td>
   ${isWin ? `<td class="result__points">× 100</td>
-  <td class="result__total">${correctAnswers * 100}</td>` : `<td class="result__total"></td>
+  <td class="result__total">${correctAnswers * Points.BASE_POINTS}</td>` : `<td class="result__total"></td>
   <td class="result__total  result__total--final">fail</td>`}
 </tr>
 ${speedAnswers > 0 ? `<tr>
@@ -28,21 +28,21 @@ ${speedAnswers > 0 ? `<tr>
   <td class="result__extra">Бонус за скорость:</td>
   <td class="result__extra">${speedAnswers} <span class="stats__result stats__result--fast"></span></td>
   <td class="result__points">× 50</td>
-  <td class="result__total">${speedAnswers * 50}</td>
+  <td class="result__total">${speedAnswers * Points.BONUS_POINTS}</td>
 </tr>` : ``}
 ${hp > 0 ? `<tr>
   <td></td>
   <td class="result__extra">Бонус за жизни:</td>
   <td class="result__extra">${hp} <span class="stats__result stats__result--alive"></span></td>
   <td class="result__points">× 50</td>
-  <td class="result__total">${hp * 50}</td>
+  <td class="result__total">${hp * Points.BONUS_POINTS}</td>
 </tr>` : ``}
 ${slowAnswers > 0 ? `<tr>
   <td></td>
   <td class="result__extra">Штраф за медлительность:</td>
   <td class="result__extra">${slowAnswers} <span class="stats__result stats__result--slow"></span></td>
   <td class="result__points">× 50</td>
-  <td class="result__total">-${slowAnswers * 50}</td>
+  <td class="result__total">-${slowAnswers * Points.BONUS_POINTS}</td>
 </tr>` : ``}
 <tr>
   <td colspan="5" class="result__total  result__total--final">

@@ -3,6 +3,10 @@ const FAST_TIMELIMIT = 20;
 const MAX_ATTEMPTS = 3;
 const CORRECT_QUESTIONS_TO_WIN = 7;
 const QUESTIONS_PER_GAME = 10;
+const Points = {
+  BASE_POINTS: 100,
+  BONUS_POINTS: 50
+};
 
 const calculateTotalGameScore = (answersArray, unusedAttempts) => {
   if (!Array.isArray(answersArray) || typeof unusedAttempts !== `number`) {
@@ -22,14 +26,14 @@ const calculateTotalGameScore = (answersArray, unusedAttempts) => {
   }
 
   clonnedArray.forEach((answer) => {
-    score += answer.isCorrect ? 100 : 0;
+    score += answer.isCorrect ? Points.BASE_POINTS : 0;
     if (answer.isCorrect) {
-      score += answer.timeLeft >= FAST_TIMELIMIT ? 50 : 0;
-      score += answer.timeLeft <= SLOW_TIMELIMIT ? -50 : 0;
+      score += answer.timeLeft >= FAST_TIMELIMIT ? Points.BONUS_POINTS : 0;
+      score += answer.timeLeft <= SLOW_TIMELIMIT ? -Points.BONUS_POINTS : 0;
     }
   });
 
-  score += unusedAttempts * 50;
+  score += unusedAttempts * Points.BONUS_POINTS;
 
   return score;
 };
@@ -53,4 +57,4 @@ const checkWinStatus = (answersArray) => {
   return answersArray.filter((item) => item.isCorrect === true).length >= CORRECT_QUESTIONS_TO_WIN;
 };
 
-export {calculateTotalGameScore, calculateDetailedStats, checkWinStatus};
+export {calculateTotalGameScore, calculateDetailedStats, checkWinStatus, Points};
