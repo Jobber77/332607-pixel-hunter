@@ -15,17 +15,15 @@ export default class FooterPartialView extends AbstractView {
   }
 
   static getHtmlClass(answer) {
-    let string = ``;
     if (answer.isCorrect && answer.timeLeft <= 10) {
-      string = `stats__result--slow`;
+      return `stats__result--slow`;
     } else if (answer.isCorrect && answer.timeLeft >= 20) {
-      string = `stats__result--fast`;
+      return `stats__result--fast`;
     } else if (answer.isCorrect) {
-      string = `stats__result--correct`;
+      return `stats__result--correct`;
     } else {
-      string = `stats__result--wrong`;
+      return `stats__result--wrong`;
     }
-    return string;
   }
 }
 

@@ -5,7 +5,8 @@ import BackButtonPartialView from './views/back-button-partial-view';
 import {createDOMElement} from './util';
 
 export default class RulesPresenter {
-  constructor() {
+  constructor(gameQuestionsData) {
+    this._gameQuestionsData = gameQuestionsData;
     this._viewBody = new RulesView();
     this._viewBody.onNextScreenCall = this.onNextScreenCall.bind(this);
     this._viewBody.onRulesInputClick = this.onRulesInputClick.bind(this);
@@ -31,8 +32,9 @@ export default class RulesPresenter {
 
   onNextScreenCall() {
     this._viewBody.removeListeners();
-    const newGameStats = GameModel.generateNewGameData();
+    const newGameStats = GameModel.generateNewGameStateObject();
     newGameStats.playerName = this._playerName;
+    newGameStats.questions = this._gameQuestionsData;
     const gameData = new GameModel(newGameStats);
     Application.showGame(gameData);
   }

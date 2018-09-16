@@ -2,8 +2,9 @@ import AbstractView from './abstract-view';
 import Application from '../application';
 
 export default class BackButtonPartialView extends AbstractView {
-  constructor() {
+  constructor(currentPresenterStopper) {
     super(`button`, [`back`]);
+    this._currentPresenterStopper = currentPresenterStopper;
   }
 
   get template() {
@@ -17,14 +18,17 @@ export default class BackButtonPartialView extends AbstractView {
   }
 
   assignListeners() {
-    this.element.addEventListener(`click`, this.onBackButtonClick);
+    this.element.addEventListener(`click`, this.onBackButtonClick.bind(this));
   }
 
   removeListeners() {
-    this.element.removeEventListener(`click`, this.onBackButtonClick);
+    this.element.removeEventListener(`click`, this.onBackButtonClick.bind(this));
   }
 
   onBackButtonClick() {
-    Application.showIntro();
+    if (this._currentPresenterStopper) {
+      this._currentPresenterStopper();
+    }
+    Application.showGreeting();
   }
 }
