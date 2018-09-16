@@ -15,8 +15,8 @@ export default class GameType1Presenter extends GamePresenter {
   }
 
   validateAnswer() {
-    const chosenAnswer1 = this.firstOptionRadio ? this.firstOptionRadio.filter((item) => item.checked === true)[0] : ``;
-    const chosenAnswer2 = this.secondOptionRadio ? this.secondOptionRadio.filter((item) => item.checked === true)[0] : ``;
+    const chosenAnswer1 = this.firstOptionRadio ? this.firstOptionRadio.filter((item) => item.checked)[0] : ``;
+    const chosenAnswer2 = this.secondOptionRadio ? this.secondOptionRadio.filter((item) => item.checked)[0] : ``;
     const correctAnswer1 = this._gameData.currentQuestionAnswers[0].isPainting ? `paint` : `photo`;
     const correctAnswer2 = this._gameData.currentQuestionAnswers[1].isPainting ? `paint` : `photo`;
     const validationResult = (chosenAnswer1.value === correctAnswer1) && (chosenAnswer2.value === correctAnswer2);
@@ -26,8 +26,8 @@ export default class GameType1Presenter extends GamePresenter {
   onNextScreenCall() {
     this.firstOptionRadio = this._viewBody.radioButtons.filter((item) => item.name === `question1`);
     this.secondOptionRadio = this._viewBody.radioButtons.filter((item) => item.name === `question2`);
-    if ((this.firstOptionRadio.some((element) => element.checked === true))
-          && this.secondOptionRadio.some((element) => element.checked === true)) {
+    if ((this.firstOptionRadio.some((element) => element.checked))
+          && this.secondOptionRadio.some((element) => element.checked)) {
       this.callNextScreen();
     }
   }

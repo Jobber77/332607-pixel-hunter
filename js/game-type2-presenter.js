@@ -15,7 +15,7 @@ export default class GameType2Presenter extends GamePresenter {
   }
 
   validateAnswer() {
-    const chosenAnswer1 = this._viewBody.radioButtons.filter((item) => item.checked === true)[0];
+    const chosenAnswer1 = this._viewBody.radioButtons.filter((item) => item.checked)[0];
     const correctAnswer1 = this._gameData.currentQuestionAnswers[0].isPainting ? `paint` : `photo`;
     const validationResult = chosenAnswer1 ? chosenAnswer1.value === correctAnswer1 : false;
     this.levelResult.isCorrect = validationResult;

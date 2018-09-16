@@ -54,7 +54,7 @@ const calculateDetailedStats = (answersArray, unusedAttempts) => {
 };
 
 const checkWinStatus = (answersArray) => {
-  return answersArray.filter((item) => item.isCorrect === true).length >= CORRECT_QUESTIONS_TO_WIN;
+  return answersArray.filter((item) => item.isCorrect).length >= CORRECT_QUESTIONS_TO_WIN;
 };
 
 export {calculateTotalGameScore, calculateDetailedStats, checkWinStatus, Points};
