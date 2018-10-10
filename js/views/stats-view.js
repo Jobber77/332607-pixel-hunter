@@ -25,21 +25,21 @@ const generateLineHtml = (levelResultHistory, unusedAttempts, counter) => {
 </tr>
 ${speedAnswers > 0 ? `<tr>
   <td></td>
-  <td class="result__extra">Бонус за скорость:</td>
+  <td class="result__extra">Bonus for speed asnwers:</td>
   <td class="result__extra">${speedAnswers} <span class="stats__result stats__result--fast"></span></td>
   <td class="result__points">× 50</td>
   <td class="result__total">${speedAnswers * Points.BONUS_POINTS}</td>
 </tr>` : ``}
 ${hp > 0 ? `<tr>
   <td></td>
-  <td class="result__extra">Бонус за жизни:</td>
+  <td class="result__extra">Bonus for unused attempts:</td>
   <td class="result__extra">${hp} <span class="stats__result stats__result--alive"></span></td>
   <td class="result__points">× 50</td>
   <td class="result__total">${hp * Points.BONUS_POINTS}</td>
 </tr>` : ``}
 ${slowAnswers > 0 ? `<tr>
   <td></td>
-  <td class="result__extra">Штраф за медлительность:</td>
+  <td class="result__extra">Penalty for slow answers:</td>
   <td class="result__extra">${slowAnswers} <span class="stats__result stats__result--slow"></span></td>
   <td class="result__points">× 50</td>
   <td class="result__total">-${slowAnswers * Points.BONUS_POINTS}</td>
@@ -62,7 +62,7 @@ export default class StatsView extends AbstractView {
     const currentIsWin = checkWinStatus(this._currentGameData.levelResultHistory);
     let counter = 1;
     return `<section class="result">
-    <h2 class="result__title">${currentIsWin ? `Победа!` : `FAIL`}</h2>
+    <h2 class="result__title">${currentIsWin ? `WIN!` : `FAIL`}</h2>
     ${this._historicalData.map((item) => generateLineHtml(item.levelResultHistory, item.hp, counter++)).join(``)}
     </section>`;
   }

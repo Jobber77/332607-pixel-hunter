@@ -9,7 +9,7 @@ export default class ErrorView extends AbstractView {
   get template() {
     return `
     <div class="modal__inner">
-      <h2 class="modal__title">Произошла ошибка! Пожалуйста, перезагрузите страницу</h2>
+      <h2 class="modal__title">An Error Occured! Please, reload page</h2>
       <p class="modal__text modal__text--error">${this._error.message}</p>
     </div>`;
   }

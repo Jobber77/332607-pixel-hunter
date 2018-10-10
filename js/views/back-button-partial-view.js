@@ -8,7 +8,7 @@ export default class BackButtonPartialView extends AbstractView {
   }
 
   get template() {
-    return `<span class="visually-hidden">Вернуться к началу</span>
+    return `<span class="visually-hidden">Go back</span>
     <svg class="icon" width="45" height="45" viewBox="0 0 45 45" fill="#000000">
       <use xlink:href="img/sprite.svg#arrow-left"></use>
     </svg>

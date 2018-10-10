@@ -7,7 +7,7 @@ export default class IntroView extends AbstractView {
 
   get template() {
     return `<button class="intro__asterisk asterisk" type="button"><span class="visually-hidden">Продолжить</span>*</button>
-    <p class="intro__motto"><sup>*</sup> Это не фото. Это рисунок маслом нидерландского художника-фотореалиста Tjalf Sparnaay.</p>`;
+    <p class="intro__motto"><sup>*</sup> This is not a photo. This is an oil painting by a Dutch photorealist Tjalf Sparnaay.</p>`;
   }
 
   assignListeners() {
