@@ -74,7 +74,8 @@ gulp.task(`copy-html`, () => {
 gulp.task(`copy`, [`copy-html`, `scripts`, `style`, `sprite`], () => {
   return gulp.src([
     `fonts/**/*.{woff,woff2}`,
-    `img/*.*`
+    `img/*.*`,
+    `web.config`
   ], {base: `.`}).
     pipe(gulp.dest(`build`));
 });
