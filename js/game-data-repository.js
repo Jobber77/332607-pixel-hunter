@@ -16,19 +16,23 @@ const checkStatus = (response) => {
   throw new Error(`${response.status}: ${response.statusText}`);
 };
 
-const loadImage = (imgLink) => {
+const loadImage = (answer) => {
   return new Promise(() => {
     const image = new Image();
-    image.onerror = () => Application.showError(new Error(`Не удалось загрузить картнку: ${imgLink}`));
-    image.src = imgLink;
+    image.onerror = () => Application.showError(new Error(`Не удалось загрузить картнку: ${answer}`));
+    image.src = answer.imgLink;
+    image.addEventListener(`load`, () => {
+      answer.height = image.height;
+      answer.width = image.width;
+    })
   });
 };
 
 const makeSureImgDownloaded = (data) => {
-  let images = data.map((question) => question.answers.map((answer) => answer.imgLink));
+  let images = data.map((question) => question.answers.map((answer) => answer));
   images = images.reduce((a, b) => a.concat(b), []);
   const dataToWait = images.map((item) => loadImage(item));
-  Promise.all(dataToWait);
+  return Promise.all(dataToWait);
 };
 
 export default class GameDataRepository {

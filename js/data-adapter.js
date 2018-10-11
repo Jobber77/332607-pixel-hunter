@@ -14,9 +14,13 @@ const QuestionTranslationMapper = {
 const preprocessAnswers = (answers) => answers.map((answer) => {
   const imgLink = answer.image.url;
   const isPainting = answer.type === `painting`;
+  const height = answer.image.height;
+  const width = answer.image.width;
   return {
     imgLink,
     isPainting,
+    height,
+    width
   };
 });
 

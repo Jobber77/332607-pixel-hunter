@@ -21,5 +21,18 @@ const createDOMElement = (type, classes, innerHtml, textContent) => {
   return newElement;
 };
 
-export {createDOMElement, showScreen};
+const resize = (frame, upcomingPicture) => {
+  const newImageSize = {
+    width: 0,
+    height: 0
+  }
+  const ratio1 = frame.height / upcomingPicture.height;
+  const ratio2 = frame.width / upcomingPicture.width;
+  const ratio = Math.min(ratio1, ratio2);
+  newImageSize.width = Math.round(upcomingPicture.width * ratio);
+  newImageSize.height = Math.round(upcomingPicture.height * ratio);
+  return newImageSize;
+};
+
+export {createDOMElement, showScreen, resize};
 
